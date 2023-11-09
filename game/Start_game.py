@@ -1,9 +1,9 @@
-from PyQt5 import uic, QtTest
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt6 import uic, QtTest
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 from speaker import Speaker
-import tetris
+import tetris as tetris
 import sys
 import os
 
@@ -11,8 +11,9 @@ class LauncherWindow(QDialog):
     def __init__(self):
         super(LauncherWindow, self).__init__()
         uic.loadUi("UI/Launcher.ui", self)
-        self.setWindowTitle("PyQt5 Tetris")
+        self.setWindowTitle("PyQt6 Tetris")
         self.setWindowIcon(QIcon("Icon.ico"))
+        self.app = QApplication([])
         self.show()
         #-----------------
         self.buttonLaunch = self.findChild(QPushButton, "LaunchButton")
@@ -28,7 +29,7 @@ class LauncherWindow(QDialog):
         self.buttonLaunch.enterEvent = lambda e: Speaker.playsound(Speaker.obj(Speaker.menu_focus))
         #-----------------
         self.versionText = self.findChild(QLabel, "VersionText")
-        self.versionText.setText("ver. " + self.getLocalVersion())
+        self.versionText.setText("ver. 0.7")
                     
     def showLauncher(self):
         self.show()
@@ -44,21 +45,13 @@ class LauncherWindow(QDialog):
 
     def UpdatePress(self):
         Speaker.playsound(Speaker.obj(Speaker.menu_accept))
-        self.msgBox = QMessageBox(QMessageBox.Information, "Unavailable", "This feature is currently unavailable", QMessageBox.Ok)
+        self.msgBox = QMessageBox(QMessageBox.Icon.Information, "Unavailable", "This feature is currently unavailable", QMessageBox.StandardButton.Ok)
+
         self.msgBox.exec()
 
     def ExitPress(self):
         Speaker.playsound(Speaker.obj(Speaker.menu_back))
-        app.quit()
-
-    def getLocalVersion(self):
-        try:
-            version_file = open("version.txt")
-            version = version_file.readline()
-            return version
-        except OSError:
-            print("could not open version file (OSError)")
-            return None
+        self.app.quit()
 
     def smoothTransform(self, width, height): 
         old_h = self.height()
@@ -93,10 +86,11 @@ class LauncherWindow(QDialog):
                 break
             QtTest.QTest.qWait(tick_duration)
 
-#=================================##=================================#
+def main():
+    app = QApplication([])
+    window = LauncherWindow()
+    window.show()
+    app.exec()
 
-app = QApplication(sys.argv)
-launcher = LauncherWindow()
-app.exec_()
-
-#=================================##=================================#
+if __name__ == "__main__":
+    main()

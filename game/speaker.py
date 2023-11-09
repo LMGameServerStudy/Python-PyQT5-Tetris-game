@@ -20,7 +20,7 @@ class Speaker():
     null                        = "null.wav"
     row_deleted                 = "row_deleted.wav"
     ui_menu_flip_single_01      = "ui_menu_flip_single_01.wav"
-    ui_menu_flip_single_02      = "ui_menu_flip_single_02.wav"    
+    ui_menu_flip_single_02      = "ui_menu_flip_single_02.wav"
 
     def scroll():
         sound = random.randint(1,2)
@@ -28,6 +28,16 @@ class Speaker():
             Speaker.playsound(Speaker.obj(Speaker.ui_menu_flip_single_01))
         if sound == 2:
             Speaker.playsound(Speaker.obj(Speaker.ui_menu_flip_single_02))
+
+    def play_background_music():
+        main_theme = "Tetris.mp3"
+        music_path = os.path.join(Speaker.current_dir, "sounds", main_theme)
+        pygame.mixer.music.load(music_path)
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)
+
+    def stop_background_music():
+        pygame.mixer.music.stop()
 
     def obj(name):
         return pygame.mixer.Sound(os.path.join(Speaker.current_dir, "sounds\\"+name))

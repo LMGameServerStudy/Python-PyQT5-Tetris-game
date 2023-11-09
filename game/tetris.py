@@ -1,14 +1,12 @@
-from PyQt5 import uic, QtGui, QtCore, QtTest
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt6 import uic, QtGui, QtCore, QtTest
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 from speaker import Speaker
-import aboutWindow
+import aboutWindow as aboutWindow
 import time as time_module
 import keyboard
 import random
-        
-#=====SHAPES=and=COLORS=====================================================================
                                      
 S = [['.....','..00.','.00..','.....','.....'],['..0..','..00.','...0.','.....','.....']]
 Z = [['.....','.00..','..00.','.....','.....'],['..0..','.00..','.0...','.....','.....']]
@@ -180,7 +178,7 @@ def playTextAnimation(self):
     self.animation.setStartValue(70)
     self.animation.setEndValue(0)
     self.animation.setDuration(1000)
-    self.animation.setEasingCurve(QEasingCurve.OutBounce)
+    self.animation.setEasingCurve(QEasingCurve.Type.ElasticOut)  # Use ElasticOut for a bouncing-out effect
     self.animation.start()
 
 #=====QT CLASSES n WINDOWS=====================================================================================
@@ -191,8 +189,9 @@ class PlayWindow(QDialog):
         self.needsReset = 0
         super(PlayWindow, self).__init__()
         uic.loadUi("UI/PlayWindow.ui", self)
-        self.setWindowTitle("PyQt5 Tetris (Game window)")
+        self.setWindowTitle("PyQt6 Tetris (Game window)")
         self.setWindowIcon(QIcon("Icon.ico"))
+        Speaker.play_background_music()
         self.pause = 1
         #-----------------
         self.buttonExit = self.findChild(QPushButton, "ExitButton")
@@ -209,29 +208,30 @@ class PlayWindow(QDialog):
         self.buttonExit.clicked.connect(self.ExitB)
         self.buttonExit.enterEvent = lambda e: Speaker.playsound(Speaker.obj(Speaker.menu_focus))
         #-----------------
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.figureWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.figureWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.figureWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.figureWidget.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.gameTimer = QTimer()
         self.gameTimer.setInterval(25)
         self.gameTimer.timeout.connect(lambda: self.GameStateUpdate(info))
         self.time = 0
-        self.buttonPause.setFocusPolicy(Qt.NoFocus)
-        self.buttonExit.setFocusPolicy(Qt.NoFocus)
+        self.buttonPause.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.buttonExit.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.wasd_space = [0,0,0,0,0]
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_W or event.key() == Qt.Key_Up:
+        if event.key() == Qt.Key.Key_W or event.key() == Qt.Key.Key_Up:
             self.wasd_space[0] = 1
-        if event.key() == Qt.Key_A or event.key() == Qt.Key_Left:
+        if event.key() == Qt.Key.Key_A or event.key() == Qt.Key.Key_Left:
             self.wasd_space[1] = 1
-        if event.key() == Qt.Key_S or event.key() == Qt.Key_Down:
+        if event.key() == Qt.Key.Key_S or event.key() == Qt.Key.Key_Down:
             self.wasd_space[2] = 1
-        if event.key() == Qt.Key_D or event.key() == Qt.Key_Right:
+        if event.key() == Qt.Key.Key_D or event.key() == Qt.Key.Key_Right:
             self.wasd_space[3] = 1
-        if event.key() == Qt.Key_Space:
+        if event.key() == Qt.Key.Key_Space:
             self.wasd_space[4] = 1
+
 
     def GameStateUpdate(self, info):
         if(self.needsReset == 1):
@@ -438,9 +438,8 @@ class Leaderboard(QDialog):
     def __init__(self, info, time):
         super(Leaderboard, self).__init__()
         uic.loadUi("UI/Leaderboard.ui", self)
-        self.setWindowTitle("PyQt5 Tetris (Leaderboard)")
+        self.setWindowTitle("PyQt6 Tetris (Leaderboard)")
         self.setWindowIcon(QIcon("Icon.ico"))
-        #------------
         self.buttonClose = self.findChild(QPushButton, "CloseButton")
         self.buttonClose.clicked.connect(self.CloseWindow)
         self.scoreText = self.findChild(QLabel, "ScoreText")
@@ -453,9 +452,11 @@ class Leaderboard(QDialog):
         Speaker.play_death()
 
     def CloseWindow(self):
+        Speaker.stop_background_music()
         self.close()
          
     def closeEvent(self, event):
+        Speaker.stop_background_music()
         self.closed.emit()
         QDialog.closeEvent(self, event)
                                                                  
@@ -464,7 +465,7 @@ class StartWindow(QDialog):
     def __init__(self, info):
         super(StartWindow, self).__init__()
         uic.loadUi("UI/Title.ui", self)
-        self.setWindowTitle("PyQt5 Tetris (Start window)")
+        self.setWindowTitle("PyQt6 Tetris (Start window)")
         self.setWindowIcon(QIcon("Icon.ico"))
         self.show()
         #------------
@@ -537,7 +538,8 @@ class StartWindow(QDialog):
         Speaker.playsound(Speaker.obj(Speaker.menu_back))
         self.close()
 
-    def closeEvent(self, event):        
+    def closeEvent(self, event):  
+        Speaker.stop_background_music()      
         self.closed.emit()
         QDialog.closeEvent(self, event)
 
