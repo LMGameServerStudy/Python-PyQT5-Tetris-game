@@ -40,7 +40,7 @@ class Speaker():
         pygame.mixer.music.stop()
 
     def obj(name):
-        return pygame.mixer.Sound(os.path.join(Speaker.current_dir, "sounds\\"+name))
+        return pygame.mixer.Sound(os.path.join(Speaker.current_dir, "sounds/"+name))
 
     def playsound(wave_obj, volume = 1.0):
         wave_obj.play()
